@@ -24,7 +24,7 @@ class GitHook{
 		
 	}
 
-	private function _push($request){
+	private function _push($repo,$branch){
 		$commands = file($this->commandPath.'push.sh');	
 		foreach($commands as $cmd){
 			exec($cmd,$output,$status);
