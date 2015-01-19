@@ -37,19 +37,22 @@ class GitHook{
 	protected function hookPush($repo,$branch){
 		$commands = $this->getCommands('push',$repo,$branch);	
 		foreach($commands as $cmd){
-			exec($cmd,$output,$status);
+			$result = exec($cmd,$output,$status);
 			$this->logger->info($cmd);
 			$this->logger->info($status);
+			if($status){
+				$this->logger->info($result);
+			}
 			$output = join("\n",$output);
 			$this->logger->info($output);
 		}
 	}	
 
-	protected function beforeHookPush(){
+	protected function beforeHookPush($repo,$branch){
 		return true;
 	}
 
-	protected function afterHookPush(){
+	protected function afterHookPush($repo,$branch){
 		return true;
 	}
 }

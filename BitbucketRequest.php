@@ -1,11 +1,13 @@
 <?php
 
+require 'vendor/autoload.php';
+
 class BitbucketRequest extends GitRequest{
 	
 	private $data;
 
 	public function __construct(){
-		$input = json_decode(file_get_contents("php://input"),true);
+		$input = json_decode($_POST['payload'],true);
 		$this->data = array(
 			'repository'	=> $input['repository']['name'],
 			'branch'		=> $input['commits'][0]['branch'],
