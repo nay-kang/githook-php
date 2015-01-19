@@ -13,9 +13,14 @@ class GitHook{
 	public function __call($name,array $arguments){
 
 		if(strpos($name,'hook')===0){
-			$method_name = str_replace('hook','',$name);
-			$method_name = '_'.strtolower($method_name);
-			return call_user_func_array(array($this,$method_name),$arguments);
+			$result = call_user_func_array(array($this,'before'.ucfirst($name)),$arguments);
+			if(!$result) return $result;
+
+			$result = call_user_func_array(array($this,$name),$arguments);
+			if(!$result) return $result;
+
+			$result = call_user_func_array(array($this,'after'.ucfirst($name)),$arguments);
+			if(!$result) return $result;
 		}
 
 		if(method_exists($this,$name)){
@@ -24,8 +29,13 @@ class GitHook{
 		
 	}
 
-	private function _push($repo,$branch){
-		$commands = file($this->commandPath.'push.sh');	
+	protected function getCommands($event,$repo,$branch){
+		$commands = file($this->commandPath.$event.'.sh');		
+		return $commands;
+	}
+
+	protected function hookPush($repo,$branch){
+		$commands = $this->getCommands('push',$repo,$branch);	
 		foreach($commands as $cmd){
 			exec($cmd,$output,$status);
 			$this->logger->info($cmd);
@@ -34,6 +44,14 @@ class GitHook{
 			$this->logger->info($output);
 		}
 	}	
+
+	protected function beforeHookPush(){
+		return true;
+	}
+
+	protected function afterHookPush(){
+		return true;
+	}
 }
 
 ?>

@@ -1,16 +1,15 @@
 <?php
 
-class GithubRequest extends GitRequest{
+class BitbucketRequest extends GitRequest{
 	
 	private $data;
 
 	public function __construct(){
-		$headers = getallheaders();
 		$input = json_decode(file_get_contents("php://input"),true);
 		$this->data = array(
 			'repository'	=> $input['repository']['name'],
-			'branch'		=> $input['repository']['default_branch'],
-			'event'			=> $headers['X-Github-Event']
+			'branch'		=> $input['commits'][0]['branch'],
+			'event'			=> 'push'
 		);
 	}
 
