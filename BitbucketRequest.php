@@ -7,12 +7,20 @@ class BitbucketRequest extends GitRequest{
 	private $data;
 
 	public function __construct(){
+		$this->logger = new Katzgrau\KLogger\Logger(__DIR__.'/logs');
 		$input = json_decode($_POST['payload'],true);
+		$this->logger->info('bitbucket input',$input);
 		$this->data = array(
 			'repository'	=> $input['repository']['name'],
-			'branch'		=> $input['commits'][0]['branch'],
 			'event'			=> 'push'
 		);
+		foreach($input['commits'] as $commit){
+			if($commit['branch']){
+				$this->data['branch'] = $commit['branch'];
+				break;
+			}	
+		}
+		$this->logger->info('bitbucket data',$this->data);
 	}
 
 	public function getRepository(){

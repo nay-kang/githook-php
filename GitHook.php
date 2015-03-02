@@ -35,10 +35,11 @@ class GitHook{
 	}
 
 	protected function hookPush($repo,$branch){
+		$this->logger->info($repo.'=>'.$branch);
 		$commands = $this->getCommands('push',$repo,$branch);	
 		foreach($commands as $cmd){
-			$result = exec($cmd,$output,$status);
 			$this->logger->info($cmd);
+			$result = exec($cmd,$output,$status);
 			$this->logger->info($status);
 			if($status){
 				$this->logger->info($result);
